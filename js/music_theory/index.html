@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Music Theory Quiz</title>
+<link rel="stylesheet" type="text/css" href="build/jslite.css" />
+<link rel="stylesheet" type="text/css" href="global.css" />
+<style type="text/css">
+.warning {
+    display: none;
+}
+</style>
+<!--[if IE]>
+<style type="text/css">
+.warning {
+    color: red;
+    display: block;
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+</style>
+<![endif]-->
+<!--
+<script type="text/javascript" src="build/jslite.js"></script>
+-->
+<script type="text/javascript" src="/jsLite/src/JSLITE.prototype.js"></script>
+<script type="text/javascript" src="/jsLite/src/JSLITE.js"></script>
+<script type="text/javascript" src="/jsLite/src/JSLITE.Element.js"></script>
+<script type="text/javascript" src="/jsLite/src/JSLITE.Composite.js"></script>
+<script type="text/javascript" src="/jsLite/src/JSLITE.Rules.js"></script>
+<script type="text/javascript" src="/jsLite/src/JSLITE.Observer.js"></script>
+<script type="text/javascript" src="/jsLite/src/JSLITE.Template.js"></script>
+<script type="text/javascript" src="/jsLite/src/JSLITE.util.js"></script>
+<script type="text/javascript" src="/jsLite/src/JSLITE.dom.js"></script>
+<script type="text/javascript" src="/jsLite/src/JSLITE.domQuery.js"></script>
+<script type="text/javascript" src="/jsLite/src/JSLITE.log.js"></script>
+<script type="text/javascript" src="/jsLite/src/JSLITE.ajax.js"></script>
+<script type="text/javascript" src="/jsLite/src/JSLITE.ux.js"></script>
+<script type="text/javascript" src="chord_quiz.js"></script>
+<script type="text/javascript" src="key_signatures_quiz.js"></script>
+</head>
+<body>
+    <p class="warning">Warning: this functionality has not been properly tested on your browser and will probably not work!</p>
+
+    <form id="mainMenu" action="">
+        <fieldset>
+            <legend>Main Menu</legend>
+            <label><input type="radio" name="quiz" value="chordQuiz" /> Chord Quiz</label>
+            <label><input type="radio" name="quiz" value="chordBuilder" /> Chord Builder</label>
+            <label><input type="radio" name="quiz" value="keySignaturesQuiz" /> Key Signatures Quiz</label>
+        </fieldset>
+    </form>
+
+    <div id="chordQuiz" style="display: none;">
+        <form id="chordMenu" action="">
+            <fieldset>
+                <legend>Skill Level</legend>
+                <label><input type="radio" id="advanced" name="difficulty" value="advanced" checked="checked" /> Advanced</label>
+                <label><input type="radio" id="intermediate" name="difficulty" value="intermediate" /> Intermediate</label>
+                <label><input type="radio" id="beginner" name="difficulty" value="beginner" /> Beginner</label>
+            </fieldset>
+        </form>
+
+        <h3>Guess the chord below by selecting a Chord, Type and an Inversion</h3>
+        <h3>Build the chord below by selecting the Notes that make it up</h3>
+
+        <div id="currentChordContainer">
+            <div id="currentChord" class="clearfix"></div>
+            <button class="skipChord">Skip Chord</button>
+        </div>
+
+        <p>Drag a note into each box</p>
+        <div id="dropZoneContainer" class="clearfix" style="display: none;">
+            <div class="dropZone"></div>
+            <div class="dropZone"></div>
+            <div class="dropZone"></div>
+            <div class="dropZone"></div>
+        </div>
+
+        <p>Chord</p>
+        <div id="notes" class="clearfix">
+        </div>
+
+        <p>Type</p>
+        <div id="chords" class="clearfix">
+        </div>
+
+        <p>Inversion</p>
+        <div id="inversions" class="clearfix">
+        </div>
+    </div>
+
+    <div id="keySignaturesQuiz" style="display: none;">
+        <h3>Guess the key signature below by selecting the Key</h3>
+
+        <div id="currentKeySignature" class="clearfix">
+        </div>
+
+        <p>Key</p>
+        <div id="keySignatures" class="clearfix">
+        </div>
+    </div>
+</body>
+</html>
+
