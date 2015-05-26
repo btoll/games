@@ -1,5 +1,5 @@
 def scaffold_top():
-    print('\nLET\'S PLAY HANGMAN!')
+    print('\n\tLET\'S PLAY HANGMAN!')
     print('')
     print('   ------------------------')
     print('   |                      |')
@@ -33,7 +33,7 @@ def scaffold_base():
     print('   |                                     |')
 
 def head():
-    print('\nLET\'S PLAY HANGMAN!')
+    print('\n\tLET\'S PLAY HANGMAN!')
     print('')
     print('   ------------------------')
     print('   |                      |')
