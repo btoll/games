@@ -13,7 +13,6 @@ def usage():
 
         --guesses, -g  The number of guesses to allow.
 
-
         HINT:
 
             Press Ctl-D to start over at any time.
