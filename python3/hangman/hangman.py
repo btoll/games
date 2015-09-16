@@ -51,7 +51,7 @@ def main(argv):
         [head, two_arms, two_legs, scaffold_base]
     )
 
-    token = '  ___  '
+    token = ' _ '
     words = open('/usr/share/dict/words').read().splitlines()
 
     try:
@@ -67,6 +67,7 @@ def draw(pieces):
         piece()
 
 def guess():
+    global guessed_letters
     global guesses
 
     try:
@@ -74,6 +75,8 @@ def guess():
 
         # Always clear the screen. The code below will determine what needs drawn.
         os.system('clear')
+
+        guessed_letters += letter
 
         if letter in word:
             # Replace every blank with the guessed letter.
@@ -92,6 +95,7 @@ def guess():
                 draw(hanging_man[len(hanging_man) - 1])
 
             print('\nGood job!')
+            print('Previous guesses = ' + guessed_letters)
             print('\nGuess the word: ' + ' '.join(blanks) + '\n')
             if token in blanks:
                 guess()
@@ -105,12 +109,14 @@ def guess():
                 # Always draw the hanging man, regardless of the total number of guesses.
                 draw(hanging_man[guesses - 1])
                 print('\nThe word does not contain the letter "' + letter + '".')
+                print('Previous guesses = ' + guessed_letters)
                 print('\nGuess the word: ' + ' '.join(blanks) + '\n')
                 guess()
             elif guesses < total_guesses:
                 # Draw the whole hanging man.
                 draw(hanging_man[len(hanging_man) - 1])
                 print('\nThe word does not contain the letter "' + letter + '".')
+                print('Previous guesses = ' + guessed_letters)
                 print('\nGuess the word: ' + ' '.join(blanks) + '\n')
                 guess()
             elif guesses == total_guesses:
@@ -125,10 +131,12 @@ def guess():
         init_game(total_guesses)
 
 def init_game(total_guesses):
+    global guessed_letters
     global guesses
     global word
     global blanks
 
+    guessed_letters = ''
     guesses = 0
     word = random.choice(words)
     blanks = [token] * len(word)
