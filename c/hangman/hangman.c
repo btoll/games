@@ -1,12 +1,25 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
+#include <time.h>
 #include "hangman.h"
+
+struct tnode *addNode(struct tnode *tree, char c);
+void draw(void);
+int drawTiles(char *tiles);
+void endGame(char *s);
+// void guess(struct tnode *tree, char *word, char *tiles, int n);
+void guess(struct tnode *tree, char *word, char *tiles);
+struct tnode *init(FILE *fp);
+int lookup(struct tnode *tree, char c);
 
 FILE *fp;
 int wrong = 0;
+
 char *art[] = {
     SCAFFOLD,
+    HEAD,
     TRUNK,
     ONE_ARM,
     TWO_ARMS,
@@ -20,24 +33,15 @@ struct tnode {
     struct tnode *right;
 };
 
-struct tnode *addNode(struct tnode *tree, char c);
-int charCmp(char s, char t);
-void draw(void);
-int drawTiles(char *tiles);
-void guess(struct tnode *tree, char *word, char *tiles, int n);
-struct tnode *init(FILE *fp);
-int lookup(struct tnode *tree, char c);
-int toLowerCase(char c);
-
 struct tnode *addNode(struct tnode *tree, char c) {
     int n;
 
     if (tree == NULL) {
         tree = (struct tnode *) malloc(sizeof(struct tnode));
 
-        tree->letter = toLowerCase(c);
+        tree->letter = tolower(c);
         tree->left = tree->right = NULL;
-    } else if ((n = charCmp(c, tree->letter)) < 0)
+    } else if ((n = c < tree->letter) < 0)
         tree->left = addNode(tree->left, c);
     else if (n > 0)
         tree->right = addNode(tree->right, c);
@@ -45,24 +49,10 @@ struct tnode *addNode(struct tnode *tree, char c) {
     return tree;
 }
 
-int charCmp(char s, char t) {
-    s = toLowerCase(s);
-    t = toLowerCase(t);
-
-    if (s < t) {
-        return -1;
-    } else if (s > t) {
-        return 1;
-    } else {
-        return 0;
-    }
-}
-
 void draw(void) {
     // Clear the screen.
     // http://stackoverflow.com/questions/2347770/how-do-you-clear-console-screen-in-c#7660837
     printf("\e[1;1H\e[2J");
-
     printf("Let's play hangman!\n");
     printf(art[wrong]);
 }
@@ -84,7 +74,20 @@ int drawTiles(char *tiles) {
     return blank;
 }
 
-void guess(struct tnode *tree, char *word, char *tiles, int n) {
+void endGame(char *s) {
+    char c;
+
+    printf(s);
+    scanf("%s", &c);
+
+    if (c == 'Y' || c == 'y')
+        init(fp);
+    else
+        printf("Goodbye!\n");
+}
+
+// void guess(struct tnode *tree, char *word, char *tiles, int n) {
+void guess(struct tnode *tree, char *word, char *tiles) {
     char c;
 
     printf("\n\nGuess: ");
@@ -94,36 +97,33 @@ void guess(struct tnode *tree, char *word, char *tiles, int n) {
         int i;
 
         for (i = 0; word[i]; ++i) {
-            if (toLowerCase(word[i]) == c)
+            if (tolower(word[i]) == c)
                 tiles[i] = c;
-
-            printf("%c\n", word[i]);
         }
 
         draw();
 
         if (drawTiles(tiles))
-            guess(tree, word, tiles, n);
+//             guess(tree, word, tiles, n);
+            guess(tree, word, tiles);
         else
-            printf("You won!\n");
+            endGame("You won! Play again? [Y/n] ");
+
     } else {
+        int size = (sizeof(art) / sizeof(*art)) - 1;
         ++wrong;
         draw();
 
-        if (--n == 0 || wrong == 5) {
-            printf("You lose! Play again? [Y/n] ");
-            scanf("%s", &c);
-
-            if (c == 'Y' || c == 'y')
-                init(fp);
-            else
-                printf("Goodbye!\n");
-
+//         if (--n == 0 || wrong == size) {
+        if (wrong == size) {
+            printf("The word was %s\n", word);
+            endGame("You lose! Play again? [Y/n] ");
         } else {
             drawTiles(tiles);
-            printf("\n\nNo! Guess again!");
+            printf("\n\nWrong! Guess again!");
 
-            guess(tree, word, tiles, n);
+//             guess(tree, word, tiles, n);
+            guess(tree, word, tiles);
         }
     }
 }
@@ -131,18 +131,21 @@ void guess(struct tnode *tree, char *word, char *tiles, int n) {
 struct tnode *init(FILE *fp) {
     struct tnode *tree = NULL;
     char tiles[30];
-    int n, i = 0;
+//     int n, i = 0, j;
+    int i = 0, j;
     char word[SIZE_W];
+    time_t t;
 
-    printf("Number of guesses: ");
-    scanf("%d", &n);
+//     printf("Number of guesses: ");
+//     scanf("%d", &n);
 
     draw();
 
-    while (i++ < 100)
-        fgets(word, SIZE_W, fp);
+    srand((unsigned) time(&t));
+    j = rand() % 75000;
 
-//     printf("%s\n", word);
+    while (i++ < j)
+        fgets(word, SIZE_W, fp);
 
     i = 0;
     while (word[i] != '\n') {
@@ -153,7 +156,8 @@ struct tnode *init(FILE *fp) {
     tiles[i] = '\0';
 
     drawTiles(tiles);
-    guess(tree, word, tiles, n);
+//     guess(tree, word, tiles, n);
+    guess(tree, word, tiles);
 
     return tree;
 }
@@ -162,21 +166,15 @@ int lookup(struct tnode *tree, char c) {
     if (tree == NULL)
         return 0;
 
-    int n;
+    int n = c < tree->letter;
 
-    if (tree->letter == c)
-        return 1;
-    else if ((n = charCmp(c, tree->letter)) < 0)
-        lookup(tree->left, c);
+    if (n < 0)
+        return lookup(tree->left, c);
     else if (n > 0)
-        lookup(tree->right, c);
-}
-
-int toLowerCase(char c) {
-    if (c >= 'A' && c <= 'Z')
-        c += 32;
-
-    return c;
+        return lookup(tree->right, c);
+    else
+        // It's a match.
+        return 1;
 }
 
 int main(int argc, char **argv) {

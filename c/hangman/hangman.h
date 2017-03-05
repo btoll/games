@@ -1,4 +1,4 @@
-#include "artwork.h"
+#include "art.h"
 
 #define SIZE_W 30
 
