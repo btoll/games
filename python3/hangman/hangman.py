@@ -58,7 +58,7 @@ def main(argv):
         init_game(total_guesses)
 
     except KeyboardInterrupt:
-        # Control-C or Control-D  sent a SIGINT to the process, handle it.
+        # Control-C or Control-D sent a SIGINT to the process, handle it.
         print('\nGame aborted!')
         sys.exit(1)
 

@@ -34,16 +34,14 @@ struct tnode {
 };
 
 struct tnode *addNode(struct tnode *tree, char c) {
-    int n;
-
     if (tree == NULL) {
         tree = (struct tnode *) malloc(sizeof(struct tnode));
 
         tree->letter = tolower(c);
         tree->left = tree->right = NULL;
-    } else if ((n = c < tree->letter) < 0)
+    } else if (c < tree->letter)
         tree->left = addNode(tree->left, c);
-    else if (n > 0)
+    else
         tree->right = addNode(tree->right, c);
 
     return tree;
@@ -94,6 +92,7 @@ void guess(struct tnode *tree, char *word, char *tiles) {
     scanf("%s", &c);
 
     if (lookup(tree, c)) {
+        printf("in lookup function\n");
         int i;
 
         for (i = 0; word[i]; ++i) {
@@ -166,15 +165,12 @@ int lookup(struct tnode *tree, char c) {
     if (tree == NULL)
         return 0;
 
-    int n = c < tree->letter;
-
-    if (n < 0)
-        return lookup(tree->left, c);
-    else if (n > 0)
-        return lookup(tree->right, c);
-    else
-        // It's a match.
+    if (c == tree->letter)
         return 1;
+    else if (c < tree->letter)
+        return lookup(tree->left, c);
+    else
+        return lookup(tree->right, c);
 }
 
 int main(int argc, char **argv) {
