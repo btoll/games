@@ -11,7 +11,7 @@ int drawTiles(char *tiles);
 void endGame(char *s);
 // void guess(struct tnode *tree, char *word, char *tiles, int n);
 void guess(struct tnode *tree, char *word, char *tiles);
-struct tnode *init(FILE *fp);
+void init();
 int lookup(struct tnode *tree, char c);
 
 FILE *fp;
@@ -84,6 +84,34 @@ void endGame(char *s) {
         printf("Goodbye!\n");
 }
 
+FILE *chooseList() {
+    int n;
+    char *list;
+
+    printf("Word lists:\n");
+    printf("1. Dictionary Words\n");
+    printf("2. Processes / Binaries\n");
+    printf("3. Services / Protocols\n");
+    printf("Choose a list: ");
+    scanf("%d", &n);
+
+    switch (n) {
+        case 1:
+            list = "/usr/local/share/hangman/words";
+            break;
+
+        case 2:
+            list = "/usr/local/share/hangman/processes";
+            break;
+
+        case 3:
+            list = "/usr/local/share/hangman/services";
+            break;
+    }
+
+    return fopen(list, "r");
+}
+
 // void guess(struct tnode *tree, char *word, char *tiles, int n) {
 void guess(struct tnode *tree, char *word, char *tiles) {
     char c;
@@ -127,7 +155,7 @@ void guess(struct tnode *tree, char *word, char *tiles) {
     }
 }
 
-struct tnode *init(FILE *fp) {
+void init() {
     struct tnode *tree = NULL;
     char tiles[30];
 //     int n, i = 0, j;
@@ -135,13 +163,19 @@ struct tnode *init(FILE *fp) {
     char word[SIZE_W];
     time_t t;
 
+    FILE *fp = chooseList();
+
+    // Always reset `wrong` counter.
+    wrong = 0;
+
 //     printf("Number of guesses: ");
 //     scanf("%d", &n);
 
     draw();
 
     srand((unsigned) time(&t));
-    j = rand() % 75000;
+    // TODO: Get size of files for modulo.
+    j = rand() % 350;
 
     while (i++ < j)
         fgets(word, SIZE_W, fp);
@@ -158,7 +192,7 @@ struct tnode *init(FILE *fp) {
 //     guess(tree, word, tiles, n);
     guess(tree, word, tiles);
 
-    return tree;
+    fclose(fp);
 }
 
 int lookup(struct tnode *tree, char c) {
@@ -174,10 +208,7 @@ int lookup(struct tnode *tree, char c) {
 }
 
 int main(int argc, char **argv) {
-    // TODO: Allow a words file to be passed on CLI.
-    fp = fopen("/usr/share/dict/words", "r");
-    init(fp);
-
+    init();
     return 0;
 }
 
