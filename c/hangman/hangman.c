@@ -47,6 +47,39 @@ struct tnode *addNode(struct tnode *tree, char c) {
     return tree;
 }
 
+FILE *chooseList() {
+    int n;
+    static FILE *fp1, *fp2, *fp3;
+
+    printf("Word lists:\n");
+    printf("1. Dictionary Words\n");
+    printf("2. Processes / Binaries\n");
+    printf("3. Services / Protocols\n");
+    printf("Choose a list: ");
+    scanf("%d", &n);
+
+    switch (n) {
+        case 1:
+            fp1 = fopen("/usr/local/share/hangman/words", "r");
+            return fp1;
+            break;
+
+        case 2:
+            fp2 = fopen("/usr/local/share/hangman/processes", "r");
+            return fp2;
+            break;
+
+        case 3:
+            fp3 = fopen("/usr/local/share/hangman/services", "r");
+            return fp3;
+            break;
+
+        default:
+            fprintf(stderr, "Could not open file, aborting.\n");
+            exit(1);
+    }
+}
+
 void draw(void) {
     // Clear the screen.
     // http://stackoverflow.com/questions/2347770/how-do-you-clear-console-screen-in-c#7660837
@@ -82,34 +115,6 @@ void endGame(char *s) {
         init(fp);
     else
         printf("Goodbye!\n");
-}
-
-FILE *chooseList() {
-    int n;
-    char *list;
-
-    printf("Word lists:\n");
-    printf("1. Dictionary Words\n");
-    printf("2. Processes / Binaries\n");
-    printf("3. Services / Protocols\n");
-    printf("Choose a list: ");
-    scanf("%d", &n);
-
-    switch (n) {
-        case 1:
-            list = "/usr/local/share/hangman/words";
-            break;
-
-        case 2:
-            list = "/usr/local/share/hangman/processes";
-            break;
-
-        case 3:
-            list = "/usr/local/share/hangman/services";
-            break;
-    }
-
-    return fopen(list, "r");
 }
 
 // void guess(struct tnode *tree, char *word, char *tiles, int n) {
